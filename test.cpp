@@ -2,8 +2,8 @@
 using namespace std;
 
 int main() {
-    int x = 5;
-    int y = 10;
-    int z = x++ + ++y;
-    cout << z << endl;
+    int c = true;       // 1
+    cout << c << endl;
+    bool t = false;
+    cout << t << endl;
 }
