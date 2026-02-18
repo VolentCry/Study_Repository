@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <cstring>
 
+
 #define MAX_STR 100   // максимальное количество строк
 #define MAX_LEN 100   // максимальная длина строки
 

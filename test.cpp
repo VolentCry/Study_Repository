@@ -1,24 +1,17 @@
 #include<iostream>
 using namespace std;
 
+void Replace(int* tA, int* tB) {
+    int temp = *tA;
+    *tA = tB;
+    *tB = tA;
+}
+
 int main() {
-    bool f = false;
-    int a, b, i = 1;
-    cin >> a;
-    while (!f && a != 0) {
-        cin >> b;
-        if (a > b || b ==0) {
-            f = true;
-        } else {
-            a = b;
-        }
-        i++;
-    }
-    if (b == 0) {
-        cout << "Последовательность возрастает" << endl; 
-    } else if (a == 0) {
-        cout << "Последовательность отсутствует" << endl;
-    } else {
-        cout << "Последовательность не возрастает " << i << endl; 
-    }
+    int a = 6, int b = 79;
+    cout << a, b;
+
+    Replace(&a, &b);
+
+    cout << a, b;
 }

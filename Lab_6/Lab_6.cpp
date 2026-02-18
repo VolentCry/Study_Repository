@@ -1,17 +1,6 @@
 #include <cstdio>
 #include <cstring>
 
-// Функция удаляет знаки препинания в конце слова (очень примитивно)
-void clean_word(char* word) {
-    size_t len = strlen(word);
-    while (len > 0 && (word[len-1] == '.' || word[len-1] == ',' || 
-                       word[len-1] == '!' || word[len-1] == '?' || 
-                       word[len-1] == ';' || word[len-1] == ':')) {
-        word[len-1] = '\0';
-        len--;
-    }
-}
-
 int main() {
     char str[1000];
     printf("Введите строку: ");
@@ -51,9 +40,6 @@ int main() {
             temp[k] = str[start + k];
         }
         temp[length] = '\0';
-
-        // Удаляем знаки препинания в конце слова
-        clean_word(temp);
 
         // Если после очистки слово стало пустым – пропускаем
         if (strlen(temp) == 0) {
