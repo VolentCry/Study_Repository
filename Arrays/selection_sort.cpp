@@ -2,11 +2,12 @@
 #include <algorithm>
 using namespace std;
 
+// Сортировка выбором
 void selectionSort(int* arr, int N);
 
 int main() {
-    int N = 9;
-    int data[N] = {99, 64, 13, 7, 25, 11, 90, 194, 3};
+    int N = 4;
+    int data[N] = {99, 0, 194, 3};
 
     cout << "Исходный маcсив: ";
     for (int i = 0; i < N; i++) {

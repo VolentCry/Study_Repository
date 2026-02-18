@@ -2,6 +2,8 @@
 using namespace std;
 
 
+// Сортировка вставками
+
 void insertionSort(int* arr, int n) {
     for (int i = 1; i < n; i++) {
         int key = arr[i];
@@ -11,12 +13,14 @@ void insertionSort(int* arr, int n) {
         while (j >= 0 && arr[j] > key) {
             arr[j + 1] = arr[j];
             j = j - 1;
-            // cout << arr[j] << " " << arr[j + 1];
-            // cout << endl;
         }
-        cout << key << " " << arr[j + 1];
-        cout << endl;
         arr[j + 1] = key;
+        
+        cout << i <<".\t";
+        for (int x = 0; x < n; x++) {
+            cout << arr[x] << " ";
+        }
+        cout << endl;
     }
 }
 
@@ -37,6 +41,7 @@ int main() {
     for (int i = 0; i < N; i++) {
         cout << data[i] << " ";
     }
+    cout << endl;
 
     return 0;
 }

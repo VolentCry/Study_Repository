@@ -2,6 +2,7 @@
 #include <algorithm>
 using namespace std;
 
+// Сортировка пузырьком
 void bubbleSort(int* arr, int);
 
 int main() {
