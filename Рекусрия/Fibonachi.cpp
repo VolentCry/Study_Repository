@@ -2,7 +2,7 @@
 using namespace std;
 
 
-unsigned long long fibonacci(int n) {
+int fibonacci(int n) {
     if (n == 0)
         return 0;
     if (n == 1)
@@ -12,12 +12,16 @@ unsigned long long fibonacci(int n) {
 
 int main() {
     int n;
+    int S = 0;
     cout << "Введите номер числа Фибоначчи: ";
     cin >> n;
 
     for (int i = 0; i <= n; ++i) {
-        cout << "F(" << i << ") = " << fibonacci(i) << endl;
+        int fibonacci_number = fibonacci(i);
+        S += fibonacci_number;
+        cout << "F(" << i << ") = " << fibonacci_number << endl;
     }
+    cout << S;
 
     return 0;
 }
