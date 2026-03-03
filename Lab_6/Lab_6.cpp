@@ -1,82 +1,58 @@
-#include <cstdio>
+#include <iostream>
 #include <cstring>
+#include <clocale>
+
+using namespace std;
 
 int main() {
-    char str[1000];
-    printf("Введите строку: ");
-    fgets(str, sizeof(str), stdin);
+    setlocale(LC_ALL, "Russian");
 
-    // Убираем перевод строки в конце
-    size_t len = strlen(str);
-    if (len > 0 && str[len-1] == '\n') {
-        str[len-1] = '\0';
+    string your_string;
+    string words[100]; // Максимальное количество слов
+    string word;
+    int word_index = 0;
+    cout << "Введите строку: ";
+    getline(cin, your_string);
+    cout << "Вы ввели: " << your_string << endl;
+    
+    for (int i = 0; i < your_string.length(); i++) {
+        if (your_string[i] != ',' && your_string[i] != '.' && your_string[i] != '!' && your_string[i] != '?' && your_string[i] != ';' && your_string[i] != ':' && your_string[i] != ' ') {
+            word += your_string[i];
+        }
+        
+        if (your_string[i] == ' ') {
+            words[word_index] = word;
+            word_index++;
+            word.clear();
+        }
     }
 
-    char words[100][100];   // до 100 слов, каждое не длиннее 99 символов
-    int counts[100] = {0};
-    int wordCount = 0;
+    if (word != "") {
+        words[word_index] = word;
+        word_index++;
+    }
 
-    int i = 0;
-    while (str[i] != '\0') {
-        // Пропускаем пробелы
-        while (str[i] == ' ') {
-            i++;
-        }
-        if (str[i] == '\0') break;
+    string most_frequent_word = "";
+    int max_count = 0;
 
-        // Начало очередного слова
-        int start = i;
-        while (str[i] != ' ' && str[i] != '\0') {
-            i++;
-        }
-        int end = i;
-
-        // Копируем слово во временный буфер (не более 99 символов)
-        char temp[100];
-        int k;
-        int length = end - start;
-        if (length > 99) length = 99; // обрезаем, если слишком длинное
-        for (k = 0; k < length; k++) {
-            temp[k] = str[start + k];
-        }
-        temp[length] = '\0';
-
-        // Если после очистки слово стало пустым – пропускаем
-        if (strlen(temp) == 0) {
-            continue;
-        }
-
-        // Ищем, встречалось ли такое слово раньше
-        int found = -1;
-        for (int j = 0; j < wordCount; j++) {
-            if (strcmp(words[j], temp) == 0) {
-                found = j;
-                break;
+    for (int i = 0; i < word_index; i++) {
+        int current_count = 0;
+        
+        for (int j = 0; j < word_index; j++) {
+            if (words[i] == words[j]) {
+                current_count++;
             }
         }
-
-        if (found != -1) {
-            counts[found]++;
-        } else {
-            // Используем strcpy, но предварительно убеждаемся, что не переполним words
-            strcpy(words[wordCount], temp);
-            counts[wordCount] = 1;
-            wordCount++;
+        
+        if (current_count > max_count) {
+            max_count = current_count;
+            most_frequent_word = words[i];
         }
     }
 
-    // Поиск самого частого слова
-    if (wordCount > 0) {
-        int maxIdx = 0;
-        for (int i = 1; i < wordCount; i++) {
-            if (counts[i] > counts[maxIdx]) {
-                maxIdx = i;
-            }
-        }
-        printf("Самое частое слово: %s\n", words[maxIdx]);
-    } else {
-        printf("В строке нет слов.\n");
-    }
+    cout << "\nВсего слов: " << word_index << endl;
+    cout << "Самое частое слово: \"" << most_frequent_word << "\"" << endl;
+    cout << "Оно встречается " << max_count << " раз(а)." << endl;
 
     return 0;
 }
