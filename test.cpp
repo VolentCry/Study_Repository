@@ -30,7 +30,6 @@ int Circle(int x, int y, int R, int cnt, ...) {
     
 
 int main() {
-    setlocale(LC_ALL, "Russian");
     int x, y, R;
     
     // cout << "Введите координаты центра окружности и её радиус через пробелы: ";
