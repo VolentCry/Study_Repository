@@ -5,7 +5,6 @@ using namespace std;
 
 int main() {
     setlocale(LC_ALL, "ru_RU.UTF-8");
-
     int n;
     cout << "Введите количество строк: ";
     cin >> n;
@@ -29,10 +28,8 @@ int main() {
             shortestIdx = i;
         }
     }
-    cout << shortestIdx << endl << arr[shortestIdx] << endl;
-
+    
     cout << "\nУдаляем самую короткую: \"" << arr[shortestIdx] << "\"" << endl;
-
     string* newArr = new string[n - 1];
 
     for (int i = 0, j = 0; i < n; i++) {
@@ -51,6 +48,5 @@ int main() {
     }
 
     delete[] arr;
-
     return 0;
 }
