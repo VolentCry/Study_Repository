@@ -1,22 +1,33 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <clocale>
 
 using namespace std;
 
 const int N = 8;
 int step_count = 0;
-const int MAX_VISUALIZATIONS = 4; // Количество шагов для визуализации
+vector<vector<int>> all_solutions; // Все найденные решения
 
-// Функция для печати текущего состояния доски
+// Вспомогательная функция: печать финальной доски
+void printFinalBoard(const vector<int>& board) {
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            cout << (board[i] == j ? " Q " : " . ");
+        }
+        cout << endl;
+    }
+}
+
+// Функция для печати шага (только до первого решения)
 void printBoard(const vector<int>& board, int currentRow, const string& action) {
     cout << "Шаг " << ++step_count << " | " << action << " (Строка " << currentRow << "):" << endl;
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
-            // Если мы находимся на заполненной строке и колонка совпадает с позицией ферзя
             if (i <= currentRow && board[i] == j) {
                 cout << " Q ";
-            } else {
+            }
+            else {
                 cout << " . ";
             }
         }
@@ -28,7 +39,6 @@ void printBoard(const vector<int>& board, int currentRow, const string& action) 
 // Функция проверки: бьют ли уже поставленные ферзи клетку (row, col)
 bool isSafe(const vector<int>& board, int row, int col) {
     for (int i = 0; i < row; ++i) {
-        // Проверка совпадения по вертикали и диагоналям
         if (board[i] == col || abs(board[i] - col) == abs(i - row)) {
             return false;
         }
@@ -36,55 +46,77 @@ bool isSafe(const vector<int>& board, int row, int col) {
     return true;
 }
 
-// Рекурсивная функция поиска решения
-bool solve(vector<int>& board, int row) {
-    // Базовый случай: если мы дошли до конца (поставили всех 8 ферзей)
+// Фаза 1: поиск первого решения с полной визуализацией каждого шага
+bool solveFirst(vector<int>& board, int row) {
     if (row == N) {
-        return true; 
+        return true;
     }
 
-    // Пробуем поставить ферзя в каждую колонку текущей строки
     for (int col = 0; col < N; ++col) {
         if (isSafe(board, row, col)) {
-            board[row] = col; // Ставим ферзя
+            board[row] = col;
+            printBoard(board, row, "Ставим ферзя");
 
-            // Визуализируем процесс постановки (первые несколько раз)
-            if (step_count < MAX_VISUALIZATIONS) {
-                printBoard(board, row, "Ставим ферзя");
+            if (solveFirst(board, row + 1)) {
+                return true;
             }
 
-            // Рекурсивно переходим к следующей строке
-            if (solve(board, row + 1)) {
-                return true; // Решение найдено, выходим из рекурсии
-            }
-            
-            // Если solve(row + 1) вернуло false, значит позиция оказалась тупиковой.
-            // Происходит возврат (backtracking). Ферзь «снимается» (перезапишется на следующей итерации).
-            if (step_count < MAX_VISUALIZATIONS) {
-                cout << "-> Тупик! Откат со строки " << row + 1 << " назад к строке " << row << endl;
-                cout << "------------------------" << endl;
-            }
+            cout << "-> Тупик! Откат: снимаем ферзя со строки " << row
+                << ", столбца " << col << endl;
+            cout << "------------------------" << endl;
+            board[row] = -1;
         }
     }
-    
-    // Если ни одна колонка не подошла, возвращаем false
-    return false; 
+
+    return false;
+}
+
+// Фаза 2: поиск всех решений (без визуализации шагов)
+void solveAll(vector<int>& board, int row) {
+    if (row == N) {
+        all_solutions.push_back(board);
+        return;
+    }
+
+    for (int col = 0; col < N; ++col) {
+        if (isSafe(board, row, col)) {
+            board[row] = col;
+            solveAll(board, row + 1);
+            board[row] = -1;
+        }
+    }
 }
 
 int main() {
-    // Вектор для хранения позиций. Индекс - это строка, значение - колонка (от 0 до 7)
+    setlocale(LC_ALL, "ru_RU.UTF-8");
+
+    // --- Фаза 1: первое решение с полной трассировкой ---
     vector<int> board(N, -1);
 
-    cout << "Начинаем поиск решения..." << endl;
+    cout << "Начинаем поиск первого решения..." << endl;
     cout << "========================" << endl;
 
-    if (solve(board, 0)) {
-        cout << "\nФинальное решение найдено!" << endl;
-        // Для финального вывода показываем доску целиком, временно сняв лимит
-        step_count = -1; 
-        printBoard(board, N - 1, "Итог");
-    } else {
+    if (solveFirst(board, 0)) {
+        cout << "\nПервое решение найдено! Всего шагов: " << step_count << endl;
+        cout << "========================" << endl;
+        printFinalBoard(board);
+    }
+    else {
         cout << "Решение не найдено." << endl;
+        return 0;
+    }
+
+    // --- Фаза 2: все решения (только финальные доски) ---
+    vector<int> board2(N, -1);
+    solveAll(board2, 0);
+
+    cout << "\n========================================" << endl;
+    cout << "Все решения задачи 8 ферзей (" << all_solutions.size() << " шт.):" << endl;
+    cout << "========================================" << endl;
+
+    for (int s = 0; s < (int)all_solutions.size(); ++s) {
+        cout << "\nРешение #" << s + 1 << ":" << endl;
+        printFinalBoard(all_solutions[s]);
     }
 
     return 0;
