@@ -3,12 +3,13 @@
 #include<clocale>
 using namespace std;
 
+
+// Описание общей стркутуры двунаправленного спика
 struct Node {
 	string data;
 	Node* pointer_to_prev_node = nullptr;
 	Node* pointer_to_next_node = nullptr;
 };
-
 
 struct List {
 	Node* head_node = nullptr;
@@ -16,7 +17,28 @@ struct List {
 };
 
 
+// Описание общей стркутуры стека через однонаправленный список
+struct StackNode {
+    int value;
+    StackNode* next;
+};
 
+
+// Описание общей стркутуры очереди
+struct QueueNode {
+    int value;
+    QueueNode* next;
+};
+
+struct Queue {
+    QueueNode* head = nullptr;
+    QueueNode* tail = nullptr;
+};
+
+
+
+
+// -------- Функции для работы со списком --------
 void PrintList(List list) {
 	Node* cur = list.head_node;
 	while (cur != nullptr) {
@@ -132,14 +154,117 @@ void DeleteElementByKey(List& list, const string& del_str) {
 	}
 
 }
+// ------------------------------------------------
+
+
+// -------- Функции для работы со стеком --------
+// Функция добавления
+void StackPush(StackNode*& head, int value) {
+    StackNode* newNode = new StackNode{value, head};
+    head = newNode;
+}
+
+// Функция удаления
+void StackPop(StackNode*& head) {
+    if (head == nullptr) return;
+    
+    StackNode* temp = head;
+    head = head->next;
+    delete temp;
+}
+
+// Функция чтения верхнего элемента 
+int StackTop(const StackNode* head) {
+    if (head == nullptr) {
+        throw out_of_range("Стек пуст.");
+    }
+    return head->value;
+}
+
+void PrintStack(const StackNode* head) {
+    if (head == nullptr) {
+        cout << "Стек пуст.\n";
+        return;
+    }
+
+    const StackNode* current = head; // Создаем временный указатель для прохода
+    cout << "Стек (сверху вниз): ";
+    
+    while (current != nullptr) {
+        cout << current->value << " ";
+        current = current->next; // Шагаем на следующий элемент
+    }
+    cout << "\n";
+}
+// ------------------------------------------------
+
+
+
+// -------- Функции для работы с очередью --------
+void Enqueue(Queue& q, int value) {
+    QueueNode* newNode = new QueueNode{value, nullptr};
+    
+    if (q.tail == nullptr) {
+        // Если очередь была пуста, новый узел становится и Головой, и Хвостом
+        q.head = newNode;
+        q.tail = newNode;
+    } else {
+        // Если в очереди уже кто-то есть, цепляем новый узел за старым хвостом
+        q.tail->next = newNode;
+        // Обновляем указатель хвоста на этот новый узел
+        q.tail = newNode;
+    }
+}
+
+// Функция удаления из очереди
+void Dequeue(Queue& q) {
+    if (q.head == nullptr) return; // очередь уже пуста
+    
+    QueueNode* temp = q.head; // Запоминаем текущую голову
+    q.head = q.head->next;    // Сдвигаем голову на следующего человека в очереди
+    
+    if (q.head == nullptr) {
+        q.tail = nullptr;
+    }
+    
+    delete temp; 
+}
+
+// Функция чтения первого элемента
+int QueueFront(const Queue& q) {
+    if (q.head == nullptr) {
+        throw std::out_of_range("Очередь пуста.");
+    }
+    return q.head->value;
+}
+
+void PrintQueue(const Queue& q) {
+    if (q.head == nullptr) {
+        cout << "Очередь пуста.\n";
+        return;
+    }
+
+    const QueueNode* current = q.head; // Начинаем с головы
+    cout << "Очередь (от начала к концу): ";
+    
+    while (current != nullptr) {
+        cout << current->value << " ";
+        current = current->next; // Шагаем на следующий элемент
+    }
+    cout << "\n";
+}
+// ------------------------------------------------
+
 
 
 int main() {
+	setlocale(LC_ALL, "ru_RU.UTF-8");
+
+	// ------------ РЕАЛИЗАЦИЯ СПИСКА ------------
 	List test_list;
 	int K;
-	setlocale(LC_ALL, "ru_RU.UTF-8");
-	cout << endl;
 
+	cout << "\nДЕМОНСТИРАЦИЯ РАБОТЫ СПИСКА\n";
 	// Заполнение списка элементами для демонстрации
 	InsertItem(test_list, "Apple", 0);
 	InsertItem(test_list, "Orange", 1);
@@ -171,6 +296,51 @@ int main() {
 
 	// Печать списка
 	PrintList(test_list);
+
+
+	// ------------ РЕАЛИЗАЦИЯ СТЕКА ------------
+	cout << "\nДЕМОНСТИРАЦИЯ РАБОТЫ СТЕКА\n";
+	StackNode* stackHead = nullptr;
+
+	StackPush(stackHead, 10);
+	StackPush(stackHead, 20);
+	StackPush(stackHead, 30);
+
+	// Вывод всего стека
+	PrintStack(stackHead);
+
+	cout << "Верхний элемент: " << StackTop(stackHead) << "\n";
+
+	StackPop(stackHead); // Удаляем 30
+	cout << "Верхний элемент после удаления: " << StackTop(stackHead) << "\n";
+
+	// очищаем память
+	while (stackHead != nullptr) {
+		StackPop(stackHead);
+	}
+
+	// ------------ РЕАЛИЗАЦИЯ ОЧЕРЕДИ ------------
+	cout << "\nДЕМОНСТИРАЦИЯ РАБОТЫ ОЧЕРЕДИ\n";
+
+	// Создаем пустую очередь
+    Queue myQueue;
+
+    Enqueue(myQueue, 10); // Встал первым
+    Enqueue(myQueue, 20); // Встал вторым
+    Enqueue(myQueue, 30); // Встал третьим
+
+	// Вывод всей очереди
+	PrintQueue(myQueue);
+
+    cout << "Первый в очереди: " << QueueFront(myQueue) << "\n";
+
+    Dequeue(myQueue);
+    cout << "Первый после ухода первого: " << QueueFront(myQueue) << "\n";
+
+    // Очистка памяти
+    while (myQueue.head != nullptr) {
+        Dequeue(myQueue);
+    }
 
 	return 0;
 }
