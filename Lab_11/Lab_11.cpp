@@ -138,6 +138,7 @@ int main() {
 	List test_list;
 	int K;
 	setlocale(LC_ALL, "ru_RU.UTF-8");
+	cout << endl;
 
 	// Заполнение списка элементами для демонстрации
 	InsertItem(test_list, "Apple", 0);
