@@ -3,8 +3,17 @@
 #include<clocale>
 using namespace std;
 
+// Описание общей стркутуры однонаправленного списка
+struct Node_one {
+	int data;
+	Node_one* pointer_to_next_node = nullptr;
+};
 
-// Описание общей стркутуры двунаправленного спика
+struct List_one {
+	Node_one* head_node = nullptr;
+};
+
+// Описание общей стркутуры двунаправленного списка
 struct Node {
 	string data;
 	Node* pointer_to_prev_node = nullptr;
@@ -36,9 +45,43 @@ struct Queue {
 };
 
 
+// -------- Функции для работы с однонаправленным списком --------
+void pushBack(List_one& list, const int& data) {
+	Node_one* new_node = new Node_one; // Динамически создаём новый узел
+	new_node->data = data; // Присваеваем полю узла data данные
+	
+	if (list.head_node == nullptr) // Если список пуст
+		list.head_node = new_node; // Новый узел становится головным узлом списка
+	else {
+		// Берём в качестве текущего узла начальный
+		Node_one* current_node = list.head_node;
+		
+		// Покеа не найдём последний узел в списке...
+		while (current_node->pointer_to_next_node != nullptr) {
+			// Переходим к следующему узлу
+			current_node = current_node->pointer_to_next_node;
+		}
+		
+		// Ссылаем последний узел списка на новый узел
+		current_node->pointer_to_next_node = new_node; 
+	}
+}
+
+void popFront(List_one& list) {
+	if (list.head_node == nullptr) {
+		return;
+	}
+	
+	Node_one* remove = list.head_node;
+	list.head_node = list.head_node->pointer_to_next_node;
+	 
+}
+// ------------------------------------------------
 
 
-// -------- Функции для работы со списком --------
+
+
+// -------- Функции для работы с двунаправленным списком --------
 void PrintList(List list) {
 	Node* cur = list.head_node;
 	while (cur != nullptr) {
@@ -260,11 +303,17 @@ void PrintQueue(const Queue& q) {
 int main() {
 	setlocale(LC_ALL, "ru_RU.UTF-8");
 
-	// ------------ РЕАЛИЗАЦИЯ СПИСКА ------------
+	// ------------ РЕАЛИЗАЦИЯ ОДНОНАПРАВЛЕННОГО ВСПИСКА ------------
+	List_one test_one_list;
+	cout << "\nДЕМОНСТИРАЦИЯ РАБОТЫ ОДНОНАПРАВЛЕННОГО СПИСКА\n";
+
+	pushBack(test_one_list, 5);
+
+	// ------------ РЕАЛИЗАЦИЯ ДУНАПРАВЛЕННОГО ВСПИСКА ------------
 	List test_list;
 	int K;
 
-	cout << "\nДЕМОНСТИРАЦИЯ РАБОТЫ СПИСКА\n";
+	cout << "\nДЕМОНСТИРАЦИЯ РАБОТЫ ДУНАПРАВЛЕННОГО СПИСКА\n";
 	// Заполнение списка элементами для демонстрации
 	InsertItem(test_list, "Apple", 0);
 	InsertItem(test_list, "Orange", 1);
@@ -278,7 +327,6 @@ int main() {
 
 	// Печать списка
 	PrintList(test_list);
-
 
 	// Добавление K элементов в конец списка
 	cout << "Введите количество элементов K: ";
