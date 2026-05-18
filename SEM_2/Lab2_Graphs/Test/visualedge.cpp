@@ -32,7 +32,7 @@ void VisualEdge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     painter->setPen(pen());
     painter->drawLine(line());
 
-    // Если ребро ориентированное, то рисуем стрелочку
+    // рисуем стрелочку если надо
     if (m_isDirected) {
         double angle = std::atan2(-line().dy(), line().dx());
 
@@ -40,12 +40,10 @@ void VisualEdge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
         int nodeRadius = 20;
         QPointF endPoint = line().p2() - QPointF(cos(angle) * nodeRadius, -sin(angle) * nodeRadius);
 
-        // Расчет крыльев стрелки
         qreal arrowSize = 12;
         QPointF arrowP1 = endPoint - QPointF(sin(angle + M_PI / 3) * arrowSize, cos(angle + M_PI / 3) * arrowSize);
         QPointF arrowP2 = endPoint - QPointF(sin(angle + M_PI - M_PI / 3) * arrowSize, cos(angle + M_PI - M_PI / 3) * arrowSize);
 
-        // Рисуем закрашенный треугольник
         painter->setBrush(Qt::black);
         painter->drawPolygon(QPolygonF() << endPoint << arrowP1 << arrowP2);
     }
@@ -61,10 +59,10 @@ void VisualEdge::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
 void VisualEdge::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    // Проверяем, что кликнули именно ЛКМ
+    // Проверяем, что ЛКМ
     if (event->button() == Qt::LeftButton) {
         bool ok;
-        // Вызываем такое же окошко, как при создании ребра
+        // Вызываем окно для изменение веса
         int newWeight = QInputDialog::getInt(nullptr, "Изменение веса",
                                              "Введите новый вес ребра:",
                                              m_weight, -1000, 1000, 1, &ok);
@@ -72,7 +70,7 @@ void VisualEdge::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         // Если пользователь нажал ОК и вес действительно изменился
         if (ok && newWeight != m_weight) {
             m_weight = newWeight;
-            update(); // Перерисовываем само ребро (цифру на нем)
+            update(); // Перерисовываем само ребро
             emit weightChanged(); // Отправляем сигнал главному окну для перерисовки матрицы
         }
     }

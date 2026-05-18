@@ -7,7 +7,7 @@
 #include <QBrush>
 #include <QList>
 
-class VisualEdge; // Опережающее объявление
+class VisualEdge;
 
 class VisualNode : public QGraphicsEllipseItem
 {

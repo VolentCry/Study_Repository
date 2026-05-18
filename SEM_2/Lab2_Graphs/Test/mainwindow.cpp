@@ -29,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent)
     topGrid->addWidget(btnAddEdge, 0, 1);
     topGrid->addWidget(btnDFS, 0, 2);
     topGrid->addWidget(btnDijkstra, 0, 3);
-
     topGrid->addWidget(btnDeleteVertex, 1, 0);
     topGrid->addWidget(btnPreset, 1, 1);
     topGrid->addWidget(btnBFS, 1, 2);
@@ -43,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     view->setRenderHint(QPainter::Antialiasing);
     view->setDragMode(QGraphicsView::RubberBandDrag);
 
-    // --- 3. ПРАВАЯ ПАНЕЛЬ (Статистика и Матрица) ---
+    // --- 3. Правая панель (Статистика, матрица) ---
     QVBoxLayout *rightPanel = new QVBoxLayout();
 
     lblVertexCount = new QLabel("Количество вершин: 0", this);
@@ -56,12 +55,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     btnClearCanvas = new QPushButton("Очистить холст", this);
     btnRandomGraph = new QPushButton("Рандомный граф", this);
-
-    // Делаем кнопки повыше для удобства
     btnClearCanvas->setMinimumHeight(40);
     btnRandomGraph->setMinimumHeight(40);
 
-    // Слой для кнопок, чтобы они стояли рядом и занимали всю ширину
+    // Слой для кнопок правой панели
     QHBoxLayout *bottomButtonsLayout = new QHBoxLayout();
     bottomButtonsLayout->addWidget(btnClearCanvas);
     bottomButtonsLayout->addWidget(btnRandomGraph);
@@ -70,12 +67,12 @@ MainWindow::MainWindow(QWidget *parent)
     rightPanel->addWidget(lblVertexCount);
     rightPanel->addWidget(lblEdgeCount);
     rightPanel->addWidget(matrixWidget);
-    rightPanel->addLayout(bottomButtonsLayout); // Кнопки прямо под матрицей
+    rightPanel->addLayout(bottomButtonsLayout);
 
-    // --- 4. ГЛАВНАЯ КОМПОНОВКА ---
+    // --- 4. Основная компановка панелей ---
     QHBoxLayout *mainSplit = new QHBoxLayout();
-    mainSplit->addWidget(view, 2); // Холст занимает 2 части ширины
-    mainSplit->addLayout(rightPanel, 1); // Правая панель занимает 1 часть
+    mainSplit->addWidget(view, 2); // Холст с графом
+    mainSplit->addLayout(rightPanel, 1); // Правая панель
 
     QVBoxLayout *mainLayout = new QVBoxLayout();
     mainLayout->addLayout(topGrid);
@@ -83,7 +80,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     centralWidget->setLayout(mainLayout);
 
-    // --- 5. ПОДКЛЮЧЕНИЕ СИГНАЛОВ ---
+    // --- 5. Подключение сигналов для кнопок ---
     connect(btnAddVertex, &QPushButton::clicked, this, &MainWindow::addVertex);
     connect(btnDeleteVertex, &QPushButton::clicked, this, &MainWindow::deleteVertex);
     connect(btnAddEdge, &QPushButton::clicked, this, &MainWindow::addEdge);
@@ -138,6 +135,7 @@ void MainWindow::deleteVertex()
 
 void MainWindow::addEdge()
 {
+    // Добавление ребра
     bool ok1, ok2, ok3;
     QString name1 = QInputDialog::getText(this, "Ребро", "Откуда:", QLineEdit::Normal, "", &ok1);
     if (!ok1 || !vertices.contains(name1)) return;
@@ -150,7 +148,7 @@ void MainWindow::addEdge()
 
     bool isDirected = false;
 
-    // Если в графе нет рёбер, то выбираем нужный тип
+    // Если в графе нет рёбер, то выбираем нужный тип графа (ориентированный/неориентированный)
     if (currentGraphMode == GraphMode::None) {
         QStringList items;
         items << "Неориентированное" << "Ориентированное (Стрелка)";
@@ -161,7 +159,7 @@ void MainWindow::addEdge()
         isDirected = (item == "Ориентированное (Стрелка)");
         currentGraphMode = isDirected ? GraphMode::Directed : GraphMode::Undirected;
     } else {
-        // Иначе используем уже установленный режим
+        // используем уже установленный режим, если таковой имеется
         isDirected = (currentGraphMode == GraphMode::Directed);
     }
 
@@ -178,8 +176,8 @@ void MainWindow::loadPreset()
 
     currentGraphMode = GraphMode::Undirected; // Явное указание типа графа
 
-    // Создаем пресет
-    // Центральная вершина
+    // Создаем пресет:
+    // Вершины
     createNodeVisual("1", 200, 0);
     createNodeVisual("2", 10, 310);
     createNodeVisual("3", 280, 220);
@@ -187,7 +185,7 @@ void MainWindow::loadPreset()
     createNodeVisual("5", -110, 110);
     createNodeVisual("6", -40, -25);
 
-    // Добавление рёбер
+    // Рёбра
     createEdgeVisual("1", "3", 8, false);
     createEdgeVisual("3", "2", 57, false);
     createEdgeVisual("1", "2", 34, false);
@@ -203,13 +201,14 @@ void MainWindow::loadPreset()
 
 void MainWindow::createNodeVisual(const QString &name, int x, int y)
 {
+    // Визуализация ребра
     VisualNode *node = new VisualNode(name);
     node->setPos(x, y);
     scene->addItem(node);
     vertices[name] = node;
 }
 
-// --- ПОСТРОЕНИЕ МАТРИЦЫ И ОБНОВЛЕНИЕ СТАТИСТИКИ ---
+// --- Построение матрицы смежности и обновление небольшой статистики по графу ---
 void MainWindow::updateMatrix()
 {
     QStringList keys = vertices.keys();
@@ -223,7 +222,6 @@ void MainWindow::updateMatrix()
     for (VisualNode *node : vertices) {
         edgeCount += node->edges().size();
     }
-    // Так как граф неориентированный, каждое ребро посчитано дважды (у обоих узлов)
     lblEdgeCount->setText("Количество рёбер: " + QString::number(edgeCount / 2));
 
     // 2. Настраиваем размеры матрицы
@@ -231,7 +229,7 @@ void MainWindow::updateMatrix()
     matrixWidget->setColumnCount(n);
     matrixWidget->setHorizontalHeaderLabels(keys);
     matrixWidget->setVerticalHeaderLabels(keys);
-    matrixWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch); // Растягиваем столбцы
+    matrixWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     // 3. Заполняем матрицу
     for (int i = 0; i < n; ++i) {
@@ -254,7 +252,6 @@ void MainWindow::updateMatrix()
                     }
                 }
             }
-
             QTableWidgetItem *item = new QTableWidgetItem(cellValue);
             item->setTextAlignment(Qt::AlignCenter);
             matrixWidget->setItem(i, j, item);
@@ -265,6 +262,7 @@ void MainWindow::updateMatrix()
 
 void MainWindow::resetColors()
 {
+    // Функция принудительного очищения графика от анимаций поиска и алгоритмов
     // Если анимация еще работает, останавливаем её
     if (animationTimer->isActive()) {
         animationTimer->stop();
@@ -283,13 +281,13 @@ void MainWindow::startAnimation(const QList<VisualNode*> &path)
 {
     resetColors();
     currentAnimationPath = path;
-    animationTimer->start(500); // 500 миллисекунд (полсекунды) на каждый шаг
+    animationTimer->start(500); // Задержка на каждом шаге анимации
 }
 
 void MainWindow::processNextAnimationStep()
 {
     if (currentAnimationPath.isEmpty()) {
-        animationTimer->stop(); // Путь пройден, останавливаем таймер
+        animationTimer->stop(); // Отсановка таймера
         QMessageBox::information(this, "Готово", "Алгоритм завершил работу!");
         return;
     }
@@ -333,7 +331,6 @@ void MainWindow::runBFS()
                 neighbor = edge->sourceNode();
             }
 
-            // КРИТИЧЕСКИ ВАЖНАЯ ПРОВЕРКА: сосед существует и мы его еще не посещали
             if (neighbor != nullptr && !visited.contains(neighbor)) {
                 visited.insert(neighbor);
                 queue.enqueue(neighbor);
@@ -346,7 +343,7 @@ void MainWindow::runBFS()
 
 void MainWindow::runDFS()
 {
-    resetColors(); // Обнуляем прошлые цвета, очереди анимаций
+    resetColors(); // Сброс цветов
 
     if (vertices.isEmpty()) return;
 
@@ -373,9 +370,9 @@ void MainWindow::runDFS()
             for (VisualEdge *edge : curr->edges()) {
                 VisualNode *neighbor = nullptr;
                 if (edge->sourceNode() == curr) {
-                    neighbor = edge->destNode(); // Мы исходим из этой вершины - идем смело
+                    neighbor = edge->destNode();
                 } else if (!edge->isDirected() && edge->destNode() == curr) {
-                    neighbor = edge->sourceNode(); // Если неориентированное, можем идти в обратную сторону
+                    neighbor = edge->sourceNode(); // Если неориентированный, то можем идти в обратную сторону
                 }
 
                 if (neighbor) {
@@ -384,15 +381,13 @@ void MainWindow::runDFS()
             }
         }
     }
-
-    startAnimation(path); // Запускаем визуализацию
-}
+    startAnimation(path); // запуск визуала
 
 
-// АЛГОРИТМ ДЕЙКСТРЫ
+// Дейкстера
 void MainWindow::runDijkstra()
 {
-    resetColors(); // Обнуляем прошлые цвета, очереди анимаций
+    resetColors(); // Сброс цветов
 
     if (vertices.isEmpty()) return;
 
@@ -407,12 +402,12 @@ void MainWindow::runDijkstra()
     VisualNode *endNode = vertices[endName];
 
     QMap<VisualNode*, int> dist; // Минимальное расстояние до вершины
-    QMap<VisualNode*, VisualNode*> prev; // Предыдущая вершина (для восстановления пути)
+    QMap<VisualNode*, VisualNode*> prev; // Предыдущая вершина
     QList<VisualNode*> unvisited = vertices.values();
 
     // Инициализация
     for (VisualNode *node : unvisited) {
-        dist[node] = 1e9; // Имитация бесконечности
+        dist[node] = 1e9;
         prev[node] = nullptr;
     }
     dist[startNode] = 0;
@@ -455,11 +450,11 @@ void MainWindow::runDijkstra()
     // Проверяем, существует ли путь
     if (prev[curr] != nullptr || curr == startNode) {
         while (curr != nullptr) {
-            path.prepend(curr); // Вставляем в начало списка (т.к. идем с конца)
+            path.prepend(curr);
             curr = prev[curr];
         }
 
-        // Выводим результат и запускаем анимацию
+        // резульат, запуск визуала
         QMessageBox::information(this, "Дейкстра", QString("Кратчайший путь найден!\nДлина пути: %1").arg(dist[endNode]));
         startAnimation(path);
     } else {
@@ -467,10 +462,10 @@ void MainWindow::runDijkstra()
     }
 }
 
-// АЛГОРИТМ ФЛОЙДА-УОРШЕЛЛА
+// Флойд
 void MainWindow::runFloyd()
 {
-    resetColors(); // Обнуляем прошлые цвета, очереди анимаций
+    resetColors(); // Сброс цветов
 
     if (vertices.isEmpty()) return;
 
@@ -502,7 +497,7 @@ void MainWindow::runFloyd()
         for (VisualEdge *edge : u->edges()) {
             VisualNode *neighbor = (edge->sourceNode() == u) ? edge->destNode() : edge->sourceNode();
             dist[u][neighbor] = edge->weight();
-            next[u][neighbor] = neighbor; // Чтобы попасть из U в Neighbor, нужно пойти в Neighbor
+            next[u][neighbor] = neighbor;
         }
     }
 
@@ -566,18 +561,15 @@ void MainWindow::checkGraphState()
     }
 }
 
-
-
-
 // Очистка холста от текущего графа
 void MainWindow::clearCanvas()
 {
-    // Удаляем все объекты вершин (а они в своих деструкторах удалят все рёбра)
+    // Удаляем все объекты вершин, рёбра сами подтянутся
     qDeleteAll(vertices);
     vertices.clear();
     scene->clear();
 
-    // Важно: сбрасываем режим графа, чтобы можно было заново выбрать ориентацию
+    // сбрасываем тип графа
     currentGraphMode = GraphMode::None;
 
     updateMatrix();
@@ -586,7 +578,7 @@ void MainWindow::clearCanvas()
 // Генерация случайного графа
 void MainWindow::generateRandomGraph()
 {
-    clearCanvas(); // Перед генерацией очищаем старый граф
+    clearCanvas(); // очищаем старый граф
 
     // Случайное количество вершин (от 5 до 8)
     int numNodes = QRandomGenerator::global()->bounded(5, 9);
@@ -598,7 +590,7 @@ void MainWindow::generateRandomGraph()
     // 1. Создаем вершины
     QStringList nodeNames;
     for (int i = 0; i < numNodes; ++i) {
-        QString name = QString::number(i + 1); // Имена будут 1, 2, 3...
+        QString name = QString::number(i + 1);
         // Разбрасываем вершины по экрану случайным образом
         int x = QRandomGenerator::global()->bounded(-250, 250);
         int y = QRandomGenerator::global()->bounded(-200, 200);
@@ -615,11 +607,11 @@ void MainWindow::generateRandomGraph()
         QString from = nodeNames[QRandomGenerator::global()->bounded(numNodes)];
         QString to = nodeNames[QRandomGenerator::global()->bounded(numNodes)];
 
-        if (from == to) continue; // Избегаем петель (ребер в саму себя)
+        if (from == to) continue; // Избегаем петель
 
-        int weight = QRandomGenerator::global()->bounded(1, 100); // Вес от 1 до 99
+        int weight = QRandomGenerator::global()->bounded(1, 51); // Вес от 1 до 50
 
-        // Проверяем, нет ли уже такого ребра, чтобы матрица смотрелась чисто
+        // Проверяем, нет ли уже такого ребра
         bool edgeExists = false;
         for (VisualEdge *e : vertices[from]->edges()) {
             if (e->destNode()->name() == to) {

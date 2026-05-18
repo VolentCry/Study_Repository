@@ -4,12 +4,12 @@
 #include <QGraphicsScene>
 
 VisualNode::VisualNode(const QString &name, QGraphicsItem *parent)
-    : QGraphicsEllipseItem(-Radius/2, -Radius/2, Radius, Radius, parent), // Центрируем круг
+    : QGraphicsEllipseItem(-Radius/2, -Radius/2, Radius, Radius, parent),
     m_name(name)
 {
     // Настройки внешнего вида круга
-    setPen(QPen(Qt::black, 2)); // Черный контур
-    setBrush(QBrush(QColor("#a1c4fd"))); // Светло-голубая заливка
+    setPen(QPen(Qt::black, 2));
+    setBrush(QBrush(QColor("#a1c4fd")));
 
     // Делаем объект перетаскиваемым мышкой и выделяемым
     setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
@@ -17,8 +17,6 @@ VisualNode::VisualNode(const QString &name, QGraphicsItem *parent)
     // Создаем текст
     m_textItem = new QGraphicsTextItem(m_name, this);
     m_textItem->setDefaultTextColor(Qt::black);
-
-    // Центрируем текст внутри круга
     QRectF textRect = m_textItem->boundingRect();
     m_textItem->setPos(-textRect.width() / 2, -textRect.height() / 2);
 }
@@ -30,7 +28,6 @@ QString VisualNode::name() const
 
 void VisualNode::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    // Рисуем базовый эллипс (круг)
     QGraphicsEllipseItem::paint(painter, option, widget);
 }
 
@@ -42,7 +39,7 @@ QVariant VisualNode::itemChange(GraphicsItemChange change, const QVariant &value
 {
     if (change == ItemPositionHasChanged) {
         for (VisualEdge *edge : edgeList) {
-            edge->adjust(); // Просим все связанные ребра перерисоваться
+            edge->adjust(); // связанные ребра перерисоваться
         }
     }
     return QGraphicsItem::itemChange(change, value);
@@ -71,5 +68,5 @@ VisualNode::~VisualNode()
 void VisualNode::setColor(const QColor &color)
 {
     setBrush(QBrush(color)); // Меняем цвет заливки
-    update(); // Даем команду перерисовать себя на сцене
+    update();
 }
