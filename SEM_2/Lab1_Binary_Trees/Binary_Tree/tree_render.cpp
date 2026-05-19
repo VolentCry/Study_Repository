@@ -34,7 +34,7 @@ void drawTreeVertical(TreeNode* root, QGraphicsScene* scene, int x, int y, int h
         int nextX = x - hOffset;
         scene->addLine(x + NODE_RADIUS, y + NODE_RADIUS,
                        nextX + NODE_RADIUS, nextY + NODE_RADIUS, QPen(Qt::black));
-        drawTreeVertical(root->left, scene, nextX, nextY, hOffset / 2, activeValue); // Пробрасываем activeValue
+        drawTreeVertical(root->left, scene, nextX, nextY, hOffset / 2, activeValue);
     }
     if (root->right) {
         int nextX = x + hOffset;
@@ -46,7 +46,7 @@ void drawTreeVertical(TreeNode* root, QGraphicsScene* scene, int x, int y, int h
     drawGraphicNode(scene, x, y, root->value, activeValue);
 }
 
-// Сделай то же самое для drawTreeHorizontal (пробрось activeValue рекурсивно и в drawGraphicNode)
+
 void drawTreeHorizontal(TreeNode* root, QGraphicsScene* scene, int x, int y, int vOffset, int activeValue) {
     if (!root) return;
     int nextX = x + 80;

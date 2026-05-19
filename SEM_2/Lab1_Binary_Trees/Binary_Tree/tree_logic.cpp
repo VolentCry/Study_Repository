@@ -89,37 +89,37 @@ void postOrderTraversal(TreeNode* root, std::vector<int>& result) {
     result.push_back(root->value);
 }
 
-
-// 1. Рекурсивный подсчет количества узлов (нужен для выделения памяти)
 int countNodes(TreeNode* root) {
+    // рекурсивный подсчет количества узлов
     if (!root) return 0;
     return 1 + countNodes(root->left) + countNodes(root->right);
 }
 
-// 2. Обходы с записью в обычный массив
 void preOrderTraversal(TreeNode* root, int* arr, int& index) {
     if (!root) return;
-    arr[index++] = root->value;              // Корень
+    arr[index++] = root->value; // Корень
     preOrderTraversal(root->left, arr, index); // Левое
-    preOrderTraversal(root->right, arr, index);// Правое
+    preOrderTraversal(root->right, arr, index); // Правое
 }
 
-void storeBSTNodes(TreeNode* root, int* arr, int& index) { // Это In-order (Симметричный)
+void storeBSTNodes(TreeNode* root, int* arr, int& index) {
+    // симметричный обход
     if (!root) return;
-    storeBSTNodes(root->left, arr, index);     // Левое
-    arr[index++] = root->value;              // Корень
-    storeBSTNodes(root->right, arr, index);    // Правое
+    storeBSTNodes(root->left, arr, index); // Левое
+    arr[index++] = root->value; // Корень
+    storeBSTNodes(root->right, arr, index); // Правое
 }
 
 void postOrderTraversal(TreeNode* root, int* arr, int& index) {
     if (!root) return;
     postOrderTraversal(root->left, arr, index); // Левое
-    postOrderTraversal(root->right, arr, index);// Правое
-    arr[index++] = root->value;               // Корень
+    postOrderTraversal(root->right, arr, index); // Правое
+    arr[index++] = root->value; // Корень
 }
 
-// 3. Обновленное построение дерева из массива
+
 TreeNode* buildBalancedTree(const int* arr, int start, int end) {
+    // построение дерева
     if (start > end) return nullptr;
 
     int mid = (start + end) / 2;
@@ -131,24 +131,26 @@ TreeNode* buildBalancedTree(const int* arr, int start, int end) {
     return root;
 }
 
-// 4. Обновленная балансировка с ручным управлением памятью
 TreeNode* balanceTree(TreeNode* root) {
+    // балансировка дерева
     int n = countNodes(root);
     if (n == 0) return nullptr;
-
-    // Выделяем сырой массив нужного размера
     int* arr = new int[n];
     int index = 0;
 
-    // Заполняем массив отсортированными значениями
     storeBSTNodes(root, arr, index);
 
-    // Очищаем старую структуру дерева
     clearTree(root);
-
-    // Строим новое и ОБЯЗАТЕЛЬНО освобождаем память массива
     TreeNode* newRoot = buildBalancedTree(arr, 0, n - 1);
     delete[] arr;
 
     return newRoot;
+}
+
+TreeNode* findMax(TreeNode* node) {
+    // Поиск максимального элемента
+    while (node && node->right != nullptr) {
+        node = node->right;
+    }
+    return node;
 }

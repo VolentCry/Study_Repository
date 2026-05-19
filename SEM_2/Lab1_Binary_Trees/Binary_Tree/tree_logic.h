@@ -13,6 +13,7 @@ TreeNode* createNode(int value);
 TreeNode* insertNode(TreeNode* root, int value);
 TreeNode* findMin(TreeNode* node);
 TreeNode* deleteNode(TreeNode* root, int value);
+TreeNode* findMax(TreeNode* node); // для поиска максимального элемента
 
 void storeBSTNodes(TreeNode* root, int* arr, int& index);
 TreeNode* buildBalancedTree(const std::vector<int>& nodes, int start, int end);
