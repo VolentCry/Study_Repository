@@ -31,7 +31,7 @@ bool isValid(const string& s) {
 }
 
 int main() {
-    // Примеры для проверки (оставил для наглядности)
+    // Примеры для проверки
     setlocale(LC_ALL, "ru_RU.UTF-8");
     string test1 = "()[]{}";
     string test2 = "([)]";
