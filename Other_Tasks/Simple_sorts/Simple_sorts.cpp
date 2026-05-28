@@ -59,22 +59,23 @@ void merge(int arr[], int left, int mid, int right) {
 		if (L[i] <= R[j]) {
 			arr[k] = L[i];
 			i++;
-		} else {
+		}
+		else {
 			arr[k] = R[j];
 			j++;
 		}
 		k++;
 	}
-	while (i < n1) { 
-		arr[k] = L[i]; 
-		i++; 
-		k++; 
+	while (i < n1) {
+		arr[k] = L[i];
+		i++;
+		k++;
 	}
 
-	while (j < n2) { 
-		arr[k] = R[j]; 
-		j++; 
-		k++; 
+	while (j < n2) {
+		arr[k] = R[j];
+		j++;
+		k++;
 	}
 
 	delete[] L;
@@ -189,52 +190,52 @@ int main() {
 
 
 	// --- 1. Быстрая сортировка (Quick Sort) ---
-	
-	//copy(intArr, intArr + nInt, arrTest);
-	//cout << "Исходный массив: "; 
-	//printArray(arrTest, nInt);
-	//quickSort(arrTest, 0, nInt - 1);
-	//cout << "Быстрая сортировка: "; 
-	//printArray(arrTest, nInt);
-	//cout << "\n";
-	
+
+	copy(intArr, intArr + nInt, arrTest);
+	cout << "Исходный массив: "; 
+	printArray(arrTest, nInt);
+	quickSort(arrTest, 0, nInt - 1);
+	cout << "Быстрая сортировка: "; 
+	printArray(arrTest, nInt);
+	cout << "\n";
+
 
 
 	// --- 2. Сортировка слиянием (Merge Sort) ---
 
-	
-	//copy(intArr, intArr + nInt, arrTest);
-	//cout << "Исходный массив: "; 
-	//printArray(arrTest, nInt);
-	//mergeSort(arrTest, 0, nInt - 1);
-	//cout << "Сортировка слиянием: "; 
-	//printArray(arrTest, nInt);
-	//cout << "\n";
-	
+
+	copy(intArr, intArr + nInt, arrTest);
+	cout << "Исходный массив: "; 
+	printArray(arrTest, nInt);
+	mergeSort(arrTest, 0, nInt - 1);
+	cout << "Сортировка слиянием: "; 
+	printArray(arrTest, nInt);
+	cout << "\n";
+
 
 	// --- 3. Блочная сортировка (Bucket Sort) ---
 
-	
-	//copy(floatArr, floatArr + nFloat, arrTestFloat);
-	//cout << "Исходный массив (float): "; 
-	//printArray(arrTestFloat, nFloat);
-	//bucketSort(arrTestFloat, nFloat);
-	//cout << "Блочная сортировка: "; 
-	//printArray(arrTestFloat, nFloat);
-	//cout << "\n";
-	
+
+	copy(floatArr, floatArr + nFloat, arrTestFloat);
+	cout << "Исходный массив (float): "; 
+	printArray(arrTestFloat, nFloat);
+	bucketSort(arrTestFloat, nFloat);
+	cout << "Блочная сортировка: "; 
+	printArray(arrTestFloat, nFloat);
+	cout << "\n";
+
 
 	// --- 4. Сортировка подсчётом (Counting Sort) ---
 
-	
-	//copy(intArr, intArr + nInt, arrTest);
-	//cout << "Исходный массив: "; 
-	//printArray(arrTest, nInt);
-	//countingSort(arrTest, nInt);
-	//cout << "Сортировка подсчётом: "; 
-	//printArray(arrTest, nInt);
-	//cout << "\n";
-	
+
+	copy(intArr, intArr + nInt, arrTest);
+	cout << "Исходный массив: "; 
+	printArray(arrTest, nInt);
+	countingSort(arrTest, nInt);
+	cout << "Сортировка подсчётом: "; 
+	printArray(arrTest, nInt);
+	cout << "\n";
+
 
 	return 0;
 }
